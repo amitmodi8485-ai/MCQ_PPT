@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorized Access Only</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #0a0e1a; margin: 0; color: #fff; }
+        .login-card { background: #111827; padding: 40px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        h2 { font-size: 22px; margin-bottom: 20px; color: #6C63FF; }
+        input[type="password"] { padding: 15px; width: 240px; background: #080c14; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-bottom: 15px; font-size: 16px; outline: none; text-align: center; }
+        button { padding: 12px 25px; background: linear-gradient(135deg, #6C63FF, #5046e5); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        .error { color: #ff6b6b; margin-top: 15px; font-size: 14px; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Enter Access Token</h2>
+    <input type="password" id="passwordField" placeholder="Enter password...">
+    <br>
+    <button onclick="checkPassword()">Access Tool</button>
+    <div class="error" id="errorMsg">Incorrect token. Access Denied.</div>
+</div>
+
+<script>
+function checkPassword() {
+    const password = document.getElementById("passwordField").value;
+    
+    // You can change "StaffOnly2026" to whatever password you want to give your group
+    if (password === "StaffOnly2026") {
+        // This instantly routes them to your secret tool filename
+        window.location.href = "tool_private_9381.html"; 
+    } else {
+        document.getElementById("errorMsg").style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>

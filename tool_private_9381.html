@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCQ Pro Generator | Amit Modi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap');
+  :root {--bg:#0a0e1a;--surface:#111827;--border:rgba(255,255,255,0.1);--accent:#6C63FF;--green:#22C55E;--text:#F0F4FF;--muted:#aab4cc;--radius:14px;--warn:#f5a623;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding:30px 20px;font-size:18px;overflow-x:hidden}
+  .page{max-width:900px;margin:0 auto}
+  .header{text-align:center;margin-bottom:40px}
+  .creator-badge{display:inline-block;padding:8px 20px;background:rgba(108, 99, 255, 0.15);border:2px solid var(--accent);border-radius:50px;color:var(--accent);font-size:16px;font-weight:800;margin-bottom:20px;text-transform:uppercase;letter-spacing:1.5px}
+  h1{font-family:'Syne',sans-serif;font-size:48px;background:linear-gradient(135deg,#fff,#a5a0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:30px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+  .card-label{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+  .card-label::after{content:'';flex:1;height:2px;background:var(--border)}
+  
+  /* New AI Input Styles */
+  .ai-container { display: flex; gap: 15px; margin-bottom: 10px; }
+  .ai-textarea { width: 100%; min-height: 80px; background:#080c14; border:1px solid var(--border); border-radius:10px; padding:15px; color:#fff; font-size:16px; resize:vertical; outline:none; -webkit-user-select:text; user-select:text; }
+  .btn-ai { background: linear-gradient(135deg, var(--green), #16a34a); color:white; border:none; padding: 0 25px; border-radius:10px; font-size:16px; cursor:pointer; font-weight:800; transition:0.2s; text-transform:uppercase; }
+  .btn-ai:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+  textarea{width:100%;min-height:220px;background:#080c14;border:1px solid var(--border);border-radius:10px;padding:20px;color:#fff;font-size:16px;resize:vertical;line-height:1.6;outline:none;-webkit-user-select:text;user-select:text}
+  .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+  .field label{font-size:14px;color:var(--muted);display:block;margin-bottom:10px;font-weight:700;text-transform:uppercase}
+  select,input{width:100%;background:#080c14;border:1px solid var(--border);border-radius:8px;padding:15px;color:#fff;font-size:16px;cursor:pointer;outline:none}
+  .themes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:15px}
+  .theme-opt{border:2px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:0.2s;text-align:center}
+  .theme-opt.active{border-color:var(--accent);background:rgba(108,99,255,0.15)}
+  .swatch{display:flex;height:30px;border-radius:6px;overflow:hidden;margin-bottom:8px}
+  .convert-btn{width:100%;padding:25px;background:linear-gradient(135deg,var(--accent),#5046e5);border:none;border-radius:var(--radius);cursor:pointer;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-top:25px;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+  .convert-btn:disabled{background:#333;color:#666;cursor:not-allowed}
+  #log-panel{background:#000;padding:20px;border-radius:12px;font-family:monospace;font-size:14px;margin-top:20px;display:none;max-height:200px;overflow-y:auto;border:1px solid var(--border)}
+  .security-badge{display:inline-block;padding:8px 18px;border-radius:8px;font-size:14px;font-weight:800;background:rgba(245,166,35,0.1);color:var(--warn);border:2px solid var(--warn);margin-top:15px}
+  footer{text-align:center;margin-top:60px;font-size:14px;color:var(--muted);letter-spacing:0.8px;padding-bottom:20px}
+  footer span{color:var(--accent);font-weight:800}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <div class="creator-badge">Creator: Amit Modi</div>
+    <h1>MCQ Pro Generator</h1>
+  </div>
+
+  <div class="card">
+    <div class="card-label">✨ Step 0: Ask Gemini AI to Generate Questions</div>
+    <div class="ai-container">
+      <textarea id="ai-prompt" class="ai-textarea" placeholder="Example: Generate 5 high-yield History questions about the Indus Valley Civilization in Gujarati language..."></textarea>
+      <button class="btn-ai" id="ai-btn" onclick="fetchFromGemini()">⚡ Ask AI</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">1. MCQ Data Input 
+        <button class="btn-small btn-sample" onclick="loadSamples()">LOAD SAMPLES</button>
+    </div>
+    <textarea id="mcq-input" placeholder="Questions generated by AI or pasted manually will appear here..."></textarea>
+    <div id="usage-info" class="security-badge">Checking Usage...</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">2. Advanced Settings</div>
+    <div class="themes-grid" id="theme-container"></div>
+    <div class="settings-grid" style="margin-top:25px">
+      <div class="field"><label>PPT Font Type</label>
+        <select id="ppt-font">
+          <option value="Calibri" selected>Calibri (Modern)</option>
+          <option value="Arial">Arial (Standard)</option>
+          <option value="Verdana">Verdana (Readable)</option>
+          <option value="Tahoma">Tahoma (Compact)</option>
+          <option value="Georgia">Georgia (Serif)</option>
+        </select>
+      </div>
+      <div class="field"><label>Option Layout</label>
+        <select id="layout-style">
+          <option value="single">Single Column (Stacked)</option>
+          <option value="double" selected>Double Column (Grid)</option>
+        </select>
+      </div>
+      <div class="field"><label>Font Size</label><select id="q-size"><option value="20">20pt</option><option value="24" selected>24pt</option><option value="28">28pt</option></select></div>
+      <div class="field"><label>Title</label><input type="text" id="ppt-title" placeholder="Quiz 2026"></div>
+      
+      <div class="field"><label style="color:var(--green)">Gemini API Key</label><input type="password" id="gemini-key" oninput="saveApiKey()" placeholder="AIZA... (Stored locally)"></div>
+      
+      <div id="pw-field" class="field" style="display:none"><label style="color:var(--warn)">Unlock PRO</label><input type="password" id="admin-password" oninput="checkUnlockPassword()" placeholder="Password"></div>
+    </div>
+  </div>
+
+  <button class="convert-btn" id="gen-btn" onclick="runGenerator()">⚡ GENERATE POWERPOINT FILE</button>
+  <div id="log-panel"></div>
+  <footer>DESIGNED & DEVELOPED BY <span>Amit Modi</span></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/libs/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+
+<script src="secure-logic.js"></script>
+
+</body>
+</html>
